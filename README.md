@@ -1,4 +1,4 @@
-#### Normalizing Flows for reconstruction of Electron Bunch Distribution along a FEL Beamline
+# Normalizing Flows for reconstruction of Electron Bunch Distribution along a FEL Beamline
 
 We apply normalizing flows to reconstrunct distribution of electrons in a bunch while propagating through an FEL beamline. 
 
