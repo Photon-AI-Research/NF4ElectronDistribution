@@ -1,0 +1,186 @@
+!----------------------
+!!! COXINEL LATTICE !!!
+!----------------------
+
+! Flag for charge
+% 240e-8 sto flag_charge
+
+
+
+!---------------------------
+!QUAPVAS AND QEMS (SM)------
+!---------------------------
+
+!SM
+% 0.1717060E+03	sto strgQuap1
+% -0.152188E+03	sto strgQuap2
+% 0.1318233E+03	sto strgQuap3
+
+% -1.0737	sto strgQem1
+% 3.3388	sto strgQem2
+% -9.1712	sto strgQem3
+% 4.2974	sto strgQem4
+
+
+
+!-3%
+!QUAPS
+!% 166.554	sto strgQuap1
+!% -147.62	sto strgQuap2
+!% 127.868	sto strgQuap3
+!Qems
+!% -1.041	sto strgQem1
+!% 3.238	sto strgQem2
+!% -8.896	sto strgQem3
+!% 4.1684	sto strgQem4
+
+
+
+% 0.0	sto Tilt1
+% 0.0	sto Tilt2
+% 0.0	sto Tilt3
+
+% 0.0	sto dx1
+% 0.0	sto dx2
+% 0.0	sto dx3
+% 0.0	sto dz1
+% 0.0	sto dz2
+% 0.0	sto dz3
+
+
+ 
+
+!0.0519 ! for 1.8 mm
+0.0804 ! for 4.3 mm
+!R56=0.666 Theta^2
+! Chicane angle and beam dump angle
+% 0.05198	sto chic_angle_p
+% -0.05198	sto chic_angle_m
+% -0.2094	sto mbd_angle
+% 0.2094	sto half_mbd_angle
+
+! Flags for ISR, CSR and LSC (0: off, 1: on)
+% 0	sto flag_isr
+% 0	sto flag_csr
+% 0	sto flag_lsc
+
+! Nbins for CSR and LSC
+% 300  	sto nbins_csr
+% 2000	sto nbins_lsc
+
+! Freq for CSR and LSC
+% 0.25 	sto f0_csr
+% 0.33 	sto f1_csr
+% 0.25 	sto f0_lsc
+% 0.33 	sto f1_lsc
+
+! Charge of the beam
+CH: CHARGE, total="flag_charge"
+
+! misalignment of the beam
+!MALIN: MALIGN
+
+
+!Apertures along the line
+DQuap: MAXAMP, X_MAX=0.00525, Y_MAX=0.00525, ELLIPTICAL=1
+DTUPE: MAXAMP, X_MAX=0.010, Y_MAX=0.010, ELLIPTICAL=1
+DUnd: MAXAMP, X_MAX=0.010, Y_MAX=0.0025, ELLIPTICAL=0
+SLIT: MAXAMP, X_MAX=0.0025, Y_MAX=0.010, ELLIPTICAL=0
+
+
+LPA.0: WATCH, DISABLE=0, FILENAME="%s-lpa.out"   !init. condition (LPA beam)
+
+!----------------------------------------------
+!------------------QUAPEVAS--------------------
+!----------------------------------------------
+
+QAP1: QUAD, L=0.0470, K1="strgQuap1", Tilt = "Tilt1", Dx = "dx1", Dz = "dz1"
+QAP2: QUAD, L=0.0511, K1="strgQuap2", Tilt = "Tilt2", Dx = "dx2", Dz = "dz2"
+QAP3: QUAD, L=0.0323, K1="strgQuap3", Tilt = "Tilt3", Dx = "dx3", Dz = "dz3"
+
+SDW1: DRIFT, L=0.04685000
+SDW11: DRIFT, L=0.1224500
+SDW12: DRIFT, L=0.1214500
+
+QuapLine: line=(SDW1,DTUPE,DQuap,QAP1,DTUPE,SDW11, DQuap,QAP2,DTUPE,SDW12,DQuap, QAP3,DTUPE)
+
+!--------------------------------------------
+!-----------------IMAGER1 + corrector -------
+!--------------------------------------------
+
+SDW13: DRIFT, L=0.75085 
+IMG1: WATCH, DISABLE=0, FILENAME="%s-Img1.out"  
+SDD1: DRIFT, L=0.6609
+Corr1: KICKER, L=0.0, HKICK=0.0, VKICK=0.0
+SDD2: DRIFT, L=0.231
+Imger1Line: line=(SDW13, IMG1, SDD1, Corr1, SDD2)
+!--------------------------------------------
+!-----------------CHICANE--------------------
+!--------------------------------------------
+Dipole1: CSRCSBEND, L=0.2, ANGLE="chic_angle_m", E2="chic_angle_m", EDGE_ORDER=2, n_kicks=15, INTEGRATION_ORDER=4, BINS="nbins_csr", &
+	SG_HALFWIDTH=1, SGDERIV_HALFWIDTH=1, ISR="flag_isr", CSR="flag_csr", HIGH_FREQUENCY_CUTOFF0="f0_csr", HIGH_FREQUENCY_CUTOFF1="f1_csr"
+
+Dipole2: CSRCSBEND, L=0.2, ANGLE="chic_angle_p", E1="chic_angle_p", EDGE_ORDER=2, n_kicks=15, INTEGRATION_ORDER=4, BINS="nbins_csr", &
+	SG_HALFWIDTH=1, SGDERIV_HALFWIDTH=1, ISR="flag_isr", CSR="flag_csr", HIGH_FREQUENCY_CUTOFF0="f0_csr", HIGH_FREQUENCY_CUTOFF1="f1_csr"
+
+Dipole3: CSRCSBEND, L=0.2, ANGLE="chic_angle_p", E2="chic_angle_p", EDGE_ORDER=2, n_kicks=15, INTEGRATION_ORDER=4, BINS="nbins_csr", &
+	SG_HALFWIDTH=1, SGDERIV_HALFWIDTH=1, ISR="flag_isr", CSR="flag_csr", HIGH_FREQUENCY_CUTOFF0="f0_csr", HIGH_FREQUENCY_CUTOFF1="f1_csr"
+
+Dipole4: CSRCSBEND, L=0.2, ANGLE="chic_angle_m", E1="chic_angle_m", EDGE_ORDER=2, n_kicks=15, INTEGRATION_ORDER=4, BINS="nbins_csr", &
+SG_HALFWIDTH=1, SGDERIV_HALFWIDTH=1, ISR="flag_isr", CSR="flag_csr", HIGH_FREQUENCY_CUTOFF0="f0_csr", HIGH_FREQUENCY_CUTOFF1="f1_csr"
+SD01: DRIFT, L=0.2
+SD02: DRIFT, L=0.275
+SDD3: DRIFT, L=0.1635
+IMG2: WATCH, DISABLE=0, FILENAME="%s-Img2.out"  
+Corr2: KICKER, L=0.0, HKICK=0.0, VKICK=0.0
+ChicaneLine: line=(Dipole1, SD01, Dipole2, SD02, SLIT, IMG2, DTUPE, SD02, Dipole3, SD01, Dipole4, SDD3)
+
+!--------------------------------------------
+!-----------------QEMS-----------------------
+!--------------------------------------------
+SDD31: DRIFT, L=0.15685
+SDW21: DRIFT, L=0.19335
+SDW22: DRIFT, L=0.14335
+SDW23: DRIFT, L=0.16835
+L2CL: DRIFT, L=0.29135
+QEM1: QUAD, L=0.2133, K1="strgQem1"
+QEM2: QUAD, L=0.2133, K1="strgQem2"
+QEM3: QUAD, L=0.2133, K1="strgQem3"
+QEM4: QUAD, L=0.2133, K1="strgQem4"
+IMG4: WATCH, DISABLE=0, FILENAME="%s-Img4.out"  
+Corr3: KICKER, L=0.0, HKICK=0.0, VKICK=0.0
+QuadLine: line=(SDD31, QEM1, SDW21, SDW21, QEM2, SDW22, IMG4, SDW22, QEM3, SDW23, Corr3, SDW23, QEM4, L2CL)
+!--------------------------------------------
+!-----------------UNDULATOR------------------
+!--------------------------------------------
+!ScrUndEnt: WATCH, DISABLE=0, FILENAME=" UndEnt.out"  
+!SrcUndMid: WATCH, DISABLE=0, FILENAME=" UndMid.out" 
+!SrcUndExit: WATCH, DISABLE=0, FILENAME=" UndExit.out" 
+Und20: WIGGLER, L=1.0, K=2.428, POLES=50, FOCUSING=1
+UndEnt: WATCH, DISABLE=0, FILENAME="%s-UndEnt.out" 
+UndMid: WATCH, DISABLE=0, FILENAME="%s-UndMid.out"
+
+UndulatorLine: line = (UndEnt, DUnd, Und20, UndMid, Und20, DTUPE)
+
+!ArtDr: DRIFT, L=1
+!UndulatorLine: line = (ArtDr, ArtDr)
+
+
+!--------------------------------------------
+!-----------------DipoleDump-----------------
+!--------------------------------------------
+
+DipoleDump: CSBEND, L=0.2, ANGLE="mbd_angle", E1="half_mbd_angle", E2="half_mbd_angle", EDGE_ORDER=2, n_kicks=10
+SDB: DRIFT, L=0.378
+SDB1: DRIFT, L=0.234
+SDB2: DRIFT, L=0.339
+SDB3: DRIFT, L=0.369
+SDB4: DRIFT, L=0.369
+IMG5: WATCH, DISABLE=0, FILENAME="%s-Img5.out"  
+Corr4: KICKER, L=0.0, HKICK=0.0, VKICK=0.0
+IMG6: WATCH, DISABLE=0, FILENAME="%s-Img6.out"  
+DumpLine: line=(SDB, Corr4, SDB1, SDB2, IMG5, SDB3, DipoleDump, SDB4, IMG6)
+SDUMP: DRIFT, L=0.531
+
+
+COXINEL: line = (CH, LPA.0, QuapLine, Imger1Line, ChicaneLine, QuadLine, UndulatorLine, DumpLine)
