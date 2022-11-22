@@ -19,7 +19,7 @@ In our work there are implemented the following models:
 Classes of models are described in ./models/model_NF.py and ./models/model_MAF.py correspondingly.
 MAF model supports parallel distributed training using [horovod](https://github.com/horovod/horovod) library.
 
-During training one can track evalution of loss and watch customized plots of reconstructions using wandb.ai
+During training one can track evolution of loss and watch customized plots of reconstructions using wandb.ai
 
 ### Requirements
     cuda/10.2 \
